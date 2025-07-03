@@ -1,8 +1,41 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@model List<practice.Models.Survey>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<style>
+    .survey-card {
+        border: 1px solid #ccc;
+        padding: 15px;
+        margin: 15px;
+        border-radius: 8px;
+        transition: transform 0.3s, box-shadow 0.3s;
+        cursor: pointer;
+        width: 250px;
+        display: inline-block;
+        vertical-align: top;
+    }
+
+        .survey-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+    .top-right-menu {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+    }
+</style>
+
+<div class="top-right-menu">
+    <button onclick="alert('User: Максим\nEmail: max@example.com\nRole: User')">☰</button>
 </div>
+
+<h1>Опитування</h1>
+
+@foreach (var survey in Model)
+{
+    <div class="survey-card" onclick="location.href='@Url.Action("Index", "Survey", new { id = survey.Id })'">
+        <h3>@survey.Name</h3>
+        <p><strong>Тема:</strong> @survey.Topic</p>
+        <p><strong>Хештеги:</strong> @string.Join(", ", survey.Hashtags)</p>
+    </div>
+}

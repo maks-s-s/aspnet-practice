@@ -4,8 +4,8 @@ using System.Collections.Generic;
 
 namespace practice.Controllers
 {
-    [Route("home")]
-    public class HomeController : Controller
+    [Route("surveys")]
+    public class SurveyController : Controller
     {
         private static List<Survey> surveys = new List<Survey>
         {
@@ -24,6 +24,15 @@ namespace practice.Controllers
                         {
                             new Answer { Text = "Відповідь 1", IsCorrect = true },
                             new Answer { Text = "Відповідь 2", IsCorrect = false }
+                        }
+                    },
+                    new Question
+                    {
+                        Text = "Питання 2",
+                        Answers = new List<Answer>
+                        {
+                            new Answer { Text = "Відповідь A", IsCorrect = false },
+                            new Answer { Text = "Відповідь B", IsCorrect = true }
                         }
                     }
                 }
@@ -49,11 +58,15 @@ namespace practice.Controllers
             }
         };
 
-        // GET /home
+        // GET /surveys?id=1
         [HttpGet("")]
-        public IActionResult Index()
+        public IActionResult Index(int id)
         {
-            return View(surveys);
+            var survey = surveys.Find(s => s.Id == id);
+            if (survey == null)
+                return NotFound();
+
+            return View(survey);
         }
     }
 }
