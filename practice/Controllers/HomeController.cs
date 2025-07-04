@@ -1,58 +1,28 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using practice.Data;
 using practice.Models;
-using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace practice.Controllers
 {
     [Route("home")]
     public class HomeController : Controller
     {
-        private static List<Survey> surveys = new List<Survey>
-        {
-            new Survey
-            {
-                Id = 1,
-                Name = "Опитування 1",
-                Topic = "Тема 1",
-                Hashtags = new List<string> { "#education", "#survey" },
-                Questions = new List<Question>
-                {
-                    new Question
-                    {
-                        Text = "Питання 1",
-                        Answers = new List<Answer>
-                        {
-                            new Answer { Text = "Відповідь 1", IsCorrect = true },
-                            new Answer { Text = "Відповідь 2", IsCorrect = false }
-                        }
-                    }
-                }
-            },
-            new Survey
-            {
-                Id = 2,
-                Name = "Опитування 2",
-                Topic = "Тема 2",
-                Hashtags = new List<string> { "#feedback", "#survey" },
-                Questions = new List<Question>
-                {
-                    new Question
-                    {
-                        Text = "Питання X",
-                        Answers = new List<Answer>
-                        {
-                            new Answer { Text = "Відповідь X1", IsCorrect = false },
-                            new Answer { Text = "Відповідь X2", IsCorrect = true }
-                        }
-                    }
-                }
-            }
-        };
+        private readonly AppDbContext _context;
 
-        // GET /home
-        [HttpGet("")]
-        public IActionResult Index()
+        public HomeController(AppDbContext context)
         {
+            _context = context;
+        }
+
+        [HttpGet("")]
+        public async Task<IActionResult> Index()
+        {
+            var surveys = await _context.Surveys
+                .Include(s => s.Hashtags)
+                .ToListAsync();
             return View(surveys);
         }
     }

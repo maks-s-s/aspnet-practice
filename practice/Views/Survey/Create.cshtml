@@ -1,0 +1,142 @@
+﻿@model practice.Models.Survey
+
+@{
+    Layout = null;
+}
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        max-width: 800px;
+        margin: auto;
+    }
+
+    input[type="text"] {
+        padding: 6px;
+        margin-bottom: 8px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    label {
+        font-weight: bold;
+    }
+
+    .section {
+        margin-bottom: 25px;
+        padding: 15px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        background: #f9f9f9;
+    }
+
+    .green-button {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        font-size: 24px;
+        cursor: pointer;
+        display: block;
+        margin: 12px auto 0 auto;
+    }
+
+    .inline-flex {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 4px;
+    }
+
+    .question-block {
+        margin-bottom: 30px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+    }
+
+    .answers-section {
+        margin-top: 18px;
+    }
+</style>
+
+<h2>Створення опитування</h2>
+
+<form asp-action="Create" method="post">
+    <div class="section">
+        <label>Назва опитування</label>
+        <input type="text" name="Name" required />
+        <label>Тема опитування</label>
+        <input type="text" name="Topic" required />
+        <label>Хештеги (через кому)</label>
+        <input type="text" name="Hashtags" />
+    </div>
+
+    <div id="questions-section" class="section">
+        <h3>Питання</h3>
+    </div>
+
+    <button type="button" id="add-question-button" class="green-button" onclick="addQuestion()">+</button>
+
+    <button type="submit" style="margin-top: 20px; padding: 10px 20px; font-size: 16px;">Створити опитування</button>
+</form>
+
+<script>
+    let questionCount = 0;
+
+    window.onload = function () {
+        addQuestion(); // Сразу создаем 1 вопрос при загрузке страницы
+    };
+
+    function addQuestion() {
+        const container = document.getElementById('questions-section');
+        const questionIndex = questionCount++;
+
+        const questionBlock = document.createElement('div');
+        questionBlock.className = 'question-block';
+        questionBlock.dataset.index = questionIndex;
+
+        questionBlock.innerHTML = `
+            <input type="text" name="Questions[${questionIndex}].Text" placeholder="Текст питання" required />
+
+            <div class="answers-section" data-question-index="${questionIndex}">
+                <div class="inline-flex">
+                    <input type="text" name="Questions[${questionIndex}].Answers[0].Text" placeholder="Відповідь 1" required />
+                </div>
+                <div class="inline-flex">
+                    <input type="text" name="Questions[${questionIndex}].Answers[1].Text" placeholder="Відповідь 2" required />
+                </div>
+                <button type="button" class="green-button add-answer-button" onclick="addAnswer(${questionIndex}, this)">+</button>
+            </div>
+        `;
+
+        container.appendChild(questionBlock);
+
+        // Скрываем кнопки добавления ответов у всех кроме последнего
+        updateAddAnswerButtons();
+    }
+
+    function addAnswer(questionIndex, buttonElement) {
+        const answersSection = document.querySelector(`.answers-section[data-question-index='${questionIndex}']`);
+        const currentAnswers = answersSection.querySelectorAll('input').length;
+        const newAnswerIndex = currentAnswers;
+
+        const answerDiv = document.createElement('div');
+        answerDiv.className = 'inline-flex';
+        answerDiv.innerHTML = `
+            <input type="text" name="Questions[${questionIndex}].Answers[${newAnswerIndex}].Text" placeholder="Відповідь ${newAnswerIndex + 1}" required />
+        `;
+
+        answersSection.insertBefore(answerDiv, buttonElement);
+    }
+
+    function updateAddAnswerButtons() {
+        const buttons = document.querySelectorAll('.add-answer-button');
+        buttons.forEach((btn, idx) => {
+            btn.style.display = (idx === buttons.length - 1) ? 'block' : 'none';
+        });
+    }
+</script>
