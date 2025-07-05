@@ -11,5 +11,6 @@ namespace practice.Models
 
         public int QuestionId { get; set; }
         public Question Question { get; set; }
+        public ICollection<SurveyResult> SurveyResults { get; set; } = new List<SurveyResult>();
     }
 }

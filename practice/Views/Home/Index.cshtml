@@ -1,5 +1,9 @@
 ﻿@model List<practice.Models.Survey>
 
+@{
+    var userRole = (string)ViewData["UserRole"] ?? "User";
+}
+
 <style>
     .survey-card {
         border: 1px solid #ccc;
@@ -24,6 +28,9 @@
         position: fixed;
         top: 10px;
         right: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
 
     .create-btn {
@@ -35,6 +42,21 @@
         border: none;
         background-color: #28a745;
         color: white;
+    }
+
+    .logout-btn {
+        padding: 5px 12px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        border-radius: 6px;
+        border: none;
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .user-info {
+        font-size: 0.9rem;
+        color: #333;
     }
 
     .action-buttons {
@@ -63,26 +85,43 @@
 </style>
 
 <div class="top-right-menu">
-    <button onclick="alert('User: Максим\nEmail: max@example.com\nRole: User')">☰</button>
+    <div class="user-info">
+        <strong>@ViewData["UserName"]</strong><br />
+        <small>@ViewData["UserEmail"]</small><br />
+        <small>Role: @userRole</small>
+    </div>
+    <form method="post" action="@Url.Action("Logout", "Account")" style="margin:0;">
+        <button type="submit" class="logout-btn">Вийти</button>
+    </form>
 </div>
 
 <h1>Опитування</h1>
 
-<button class="create-btn" onclick="location.href='@Url.Action("Create", "Survey")'">+ Додати опитування</button>
+@if (userRole == "Admin")
+{
+    <button class="create-btn" onclick="location.href='@Url.Action("Create", "Survey")'">+ Додати опитування</button>
+}
 
 @foreach (var survey in Model)
 {
     <div class="survey-card" onclick="location.href='/surveys/watch?id=@survey.Id'">
-        <div class="action-buttons" onclick="event.stopPropagation();">
-            <button class="action-btn edit-btn" title="Редагувати"
-                    onclick="location.href='/surveys/edit?id=@survey.Id'">
-                ✏️
-            </button>
-            <button class="action-btn delete-btn" title="Видалити"
-                    onclick="if(confirm('Ви впевнені, що хочете видалити опитування?')) location.href='/surveys/delete?id=@survey.Id'">
-                🗑️
-            </button>
-        </div>
+        @if (userRole == "Admin")
+        {
+            <div class="action-buttons" onclick="event.stopPropagation();">
+                <button class="action-btn edit-btn" title="Редагувати"
+                        onclick="location.href='/surveys/edit?id=@survey.Id'">
+                    ✏️
+                </button>
+                <button class="action-btn delete-btn" title="Видалити"
+                        onclick="if(confirm('Ви впевнені, що хочете видалити опитування?')) location.href='/surveys/delete?id=@survey.Id'">
+                    🗑️
+                </button>
+                <button class="action-btn" title="Статистика"
+                        onclick="location.href='/surveys/stats?id=@survey.Id'">
+                    📊
+                </button>
+            </div>
+        }
         <h3>@survey.Name</h3>
         <p><strong>Тема:</strong> @survey.Topic</p>
         <p><strong>Хештеги:</strong> @string.Join(", ", survey.Hashtags.Select(h => h.Tag))</p>

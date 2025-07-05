@@ -1,7 +1,7 @@
 ﻿@model practice.Models.Survey
 
 @{
-    ViewData["Title"] = @Model.Name;
+    ViewData["Title"] = Model.Name;
 }
 
 <style>
@@ -44,40 +44,22 @@
 <p><strong>Тема:</strong> @Model.Topic</p>
 <p><strong>Хештеги:</strong> @string.Join(", ", Model.Hashtags.Select(h => h.Tag))</p>
 
-<form id="surveyForm">
-    @for (int i = 0; i < Model.Questions.Count; i++)
+<form asp-controller="Survey" asp-action="Submit" method="post" id="surveyForm">
+    <input type="hidden" name="surveyId" value="@Model.Id" />
+
+    @foreach (var question in Model.Questions)
     {
-        var question = Model.Questions[i];
         <div class="question-block">
-            <p><strong>@(i + 1). @question.Text</strong></p>
-            @for (int j = 0; j < question.Answers.Count; j++)
+            <p><strong>@question.Text</strong></p>
+            @foreach (var answer in question.Answers)
             {
-                var answer = question.Answers[j];
                 <label class="answer-option">
-                    <input type="radio"
-                           name="question_@i"
-                           value="@answer.Text" />
+                    <input type="radio" name="answers[@question.Id]" value="@answer.Id" required />
                     @answer.Text
                 </label>
             }
         </div>
     }
 
-    <button type="button" class="submit-button" onclick="submitSurvey()">Відправити</button>
+    <button type="submit" class="submit-button">Відправити</button>
 </form>
-
-<script>
-    function submitSurvey() {
-        const questionsCount = @Model.Questions.Count;
-        for (let i = 0; i < questionsCount; i++) {
-            const selected = document.querySelector('input[name="question_' + i + '"]:checked');
-            if (!selected) {
-                alert("Будь ласка, оберіть відповідь для кожного питання перед відправкою.");
-                return;
-            }
-        }
-
-        alert("Дякуємо за проходження опитування!");
-        window.location.href = "/home"; // Переход на /home после завершения
-    }
-</script>

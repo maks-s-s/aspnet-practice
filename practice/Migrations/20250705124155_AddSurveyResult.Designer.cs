@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using practice.Data;
 
@@ -10,9 +11,11 @@ using practice.Data;
 namespace practice.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250705124155_AddSurveyResult")]
+    partial class AddSurveyResult
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.6");
@@ -253,7 +256,7 @@ namespace practice.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("SurveyResults");
+                    b.ToTable("SurveyResult");
                 });
 
             modelBuilder.Entity("practice.Models.User", b =>

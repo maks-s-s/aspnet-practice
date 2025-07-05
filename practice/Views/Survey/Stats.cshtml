@@ -1,0 +1,90 @@
+﻿@model List<practice.ViewModels.SurveyStatsViewModel>
+
+@{
+    Layout = null;
+}
+
+<style>
+    .survey-card {
+        border: 1px solid #ccc;
+        padding: 15px;
+        margin: 15px;
+        border-radius: 8px;
+        transition: transform 0.3s, box-shadow 0.3s;
+        cursor: default;
+        width: 300px;
+        display: inline-block;
+        vertical-align: top;
+        position: relative;
+        background-color: #fff;
+    }
+
+        .survey-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+    .question-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .answer-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 10px;
+        border-bottom: 1px solid #eee;
+        font-size: 0.95rem;
+    }
+
+        .answer-item:last-child {
+            border-bottom: none;
+        }
+
+    .answer-text {
+        color: #333;
+    }
+
+    .answer-percentage {
+        font-weight: 600;
+        color: #555;
+        min-width: 40px;
+        text-align: right;
+    }
+
+    .back-btn {
+        display: inline-block;
+        margin: 15px;
+        padding: 8px 16px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+        text-decoration: none;
+    }
+
+        .back-btn:hover {
+            background-color: #0056b3;
+        }
+</style>
+
+<a class="back-btn" href="@Url.Action("Index", "Home")">← Назад</a>
+
+<h1>📊 Статистика опитування</h1>
+
+@foreach (var question in Model)
+{
+    <div class="survey-card">
+        <div class="question-title">@question.QuestionText</div>
+        @foreach (var answer in question.AnswerStats)
+        {
+            <div class="answer-item">
+                <div class="answer-text">@answer.AnswerText</div>
+                <div class="answer-percentage">@answer.Percentage%</div>
+            </div>
+        }
+    </div>
+}
